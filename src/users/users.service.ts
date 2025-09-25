@@ -31,26 +31,42 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return this.prisma.user.findMany();
-  }
-
-  findOne(id: string) {
-    return this.prisma.user.findUnique({
-      where: { id },
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.prisma.user.findMany();
+    return plainToInstance(UserResponseDto, users, {
+      excludeExtraneousValues: true,
     });
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.user.update({
+  async findOne(id: string): Promise<UserResponseDto | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: updateUserDto,
     });
+
+    return plainToInstance(UserResponseDto, updatedUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  remove(id: string) {
-    return this.prisma.user.delete({
+  async remove(id: string): Promise<void> {
+    await this.prisma.user.delete({
       where: { id },
     });
+
+    return;
   }
 }
