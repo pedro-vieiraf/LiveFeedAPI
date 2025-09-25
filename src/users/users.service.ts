@@ -1,14 +1,16 @@
+import bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import bcrypt from 'bcrypt';
+import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const { email, username, password, name, bio } = createUserDto;
 
     const saltRounds = 10;
@@ -24,13 +26,9 @@ export class UsersService {
       },
     });
 
-    const userWithoutPassword = {
-      data: {
-        ...newUser,
-        password: undefined,
-      },
-    };
-    return userWithoutPassword;
+    return plainToInstance(UserResponseDto, newUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
   findAll() {
