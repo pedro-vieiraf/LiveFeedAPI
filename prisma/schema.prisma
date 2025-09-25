@@ -9,6 +9,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EventType {
+  POST_CREATED
+  USER_FOLLOWED
+  ARTICLE_PUBLISHED
+  ORDER_PAID
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -35,13 +42,10 @@ model Post {
 }
 
 model Event {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  location    String?
-  date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  type       EventType
+  payload    Json?    // Qualquer dado extra sobre o evento
+  createdAt  DateTime @default(now())
 
   organizer   User     @relation(fields: [organizerId], references: [id])
   organizerId String

@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "public"."EventType" AS ENUM ('POST_CREATED', 'USER_FOLLOWED', 'ARTICLE_PUBLISHED', 'ORDER_PAID');
+
 -- CreateTable
 CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
@@ -27,12 +30,9 @@ CREATE TABLE "public"."Post" (
 -- CreateTable
 CREATE TABLE "public"."Event" (
     "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "description" TEXT,
-    "location" TEXT,
-    "date" TIMESTAMP(3) NOT NULL,
+    "type" "public"."EventType" NOT NULL,
+    "payload" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
     "organizerId" TEXT NOT NULL,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
