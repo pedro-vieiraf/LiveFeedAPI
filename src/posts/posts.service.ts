@@ -20,7 +20,12 @@ export class PostsService {
           connect: { id: authorId },
         },
       },
-      include: { author: true },
+      select: {
+        id: true,
+        content: true,
+        imageUrl: true,
+        author: true,
+      },
     });
 
     return plainToInstance(PostResponseDto, newPost);
