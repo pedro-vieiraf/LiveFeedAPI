@@ -4,25 +4,35 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Event } from '@prisma/client';
 import { EventTypeEnum } from 'src/common/enums/event-type.enum';
+import { plainToInstance } from 'class-transformer';
+import { EventResponseDto } from './dto/event-response.dto';
 
 @Injectable()
 export class EventsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createEventDto: CreateEventDto): Promise<Event> {
+  async create(createEventDto: CreateEventDto): Promise<EventResponseDto> {
     const type = createEventDto.type as EventTypeEnum;
     const payload = createEventDto.payload;
-    const organizerId = createEventDto.organizerId;
+    const userId = createEventDto.userId;
 
     const newEvent = await this.prisma.event.create({
       data: {
         type,
         payload,
-        organizerId,
+        user: {
+          connect: { id: userId },
+        },
+      },
+      select: {
+        id: true,
+        type: true,
+        payload: true,
+        user: true,
       },
     });
 
-    return newEvent;
+    return plainToInstance(EventResponseDto, newEvent);
   }
 
   async findAll(): Promise<Event[]> {

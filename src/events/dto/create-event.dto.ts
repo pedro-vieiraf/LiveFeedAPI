@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { EventType } from '@prisma/client';
 import {
   IsEnum,
   IsOptional,
   IsNotEmpty,
-  IsString,
   IsObject,
+  IsUUID,
 } from 'class-validator';
 
 export class CreateEventDto {
@@ -17,7 +16,6 @@ export class CreateEventDto {
   @IsObject()
   payload?: Record<string, any>;
 
-  @IsString()
-  @IsNotEmpty()
-  organizerId: string;
+  @IsUUID()
+  userId: string;
 }

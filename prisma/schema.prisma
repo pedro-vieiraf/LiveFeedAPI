@@ -47,6 +47,6 @@ model Event {
   payload    Json?    // Qualquer dado extra sobre o evento
   createdAt  DateTime @default(now())
 
-  organizer   User     @relation(fields: [organizerId], references: [id])
-  organizerId String
+  user   User     @relation(fields: [userId], references: [id])
+  userId String
 }
