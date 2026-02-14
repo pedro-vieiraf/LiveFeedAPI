@@ -1,0 +1,52 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EventType {
+  POST_CREATED
+  USER_FOLLOWED
+  ARTICLE_PUBLISHED
+  ORDER_PAID
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts     Post[]
+  events    Event[]
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String
+  imageUrl  String?  // opcional, para posts com imagem
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+model Event {
+  id         String   @id @default(uuid())
+  type       EventType
+  payload    Json?    // Qualquer dado extra sobre o evento
+  createdAt  DateTime @default(now())
+
+  user   User     @relation(fields: [userId], references: [id])
+  userId String
+}
